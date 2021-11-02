@@ -22,8 +22,7 @@
 int main()
 {
 
-  map_t *map = init_map("100x100");
-
+  map_t *map = init_map("20x20* o12");
 
   free(map);
   

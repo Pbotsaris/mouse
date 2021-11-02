@@ -17,14 +17,16 @@
  */
 #include "../include/map.h"
 
-// 20x20* o12
+// 
 
-static int get_height(map_t *map, input_t *input);
-static int get_width(map_t *map, input_t *input);
+static int load_height(map_t *map, input_t *input);
+static int load_width(map_t *map, input_t *input);
+static int load_every(map_t *map, input_t *input);
+static char next_char(input_t *input);
 static int to_int(char *str);
 static int validate(input_t *input);
 
-// 20x20* o12
+// 
 map_t *init_map(char *str)
 {
    input_t input;
@@ -34,14 +36,21 @@ map_t *init_map(char *str)
    input.cursor   = 0;
 
    strncpy(input.str, str, input.len);
-   get_height(map, &input);
-   get_width(map, &input);
-   printf("h: %d, w: %d", map->height, map->width);
+   load_height(map, &input);
+   load_width(map, &input);
+
+   if(!load_every(map, &input))
+   {
+       printf("bad input\n");
+        return NULL;
+   }
+   
+      printf("h: %d, w: %d, full: %c, empty: %c, path: %c, entrypoint: %c, exit: %c ", map->height, map->width, map->full, map->empty, map->path, map->entrypoint, map->exit);
 
    return map;
 }
 
-int get_height(map_t *map , input_t *input)
+static int load_height(map_t *map , input_t *input)
 {
    char buffer[input->len];
 
@@ -65,7 +74,7 @@ int get_height(map_t *map , input_t *input)
    return 1;
 }
 
-int get_width(map_t *map, input_t *input)
+static int load_width(map_t *map, input_t *input)
 {
 
    char buffer[input->len];
@@ -88,6 +97,37 @@ int get_width(map_t *map, input_t *input)
 
 }
 
+static int load_every(map_t *map, input_t *input)
+{
+
+   map->full = next_char(input);
+
+   if(map->full == '\0' )
+      return 0;
+
+   map->empty = next_char(input);
+
+   if(map->empty == '\0')
+      return 0;
+
+   map->path = next_char(input);
+
+   if(map->path == '\0')
+      return 0;
+
+   map->entrypoint = next_char(input);
+
+   if(map->entrypoint == '\0')
+      return 0;
+
+   map->exit = next_char(input);
+
+   if(map->exit == '\0')
+      return 0;
+
+   return 1;
+}
+
 
 static int to_int(char str[])
 {
@@ -108,3 +148,12 @@ static int validate(input_t *input)
 
    return 0;
 }
+
+static char next_char(input_t *input)
+{
+   if(input->cursor >= (int)input->len) 
+      return '\0';
+
+  return input->str[input->cursor++];
+}
+
