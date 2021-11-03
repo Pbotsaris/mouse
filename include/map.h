@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct input
 {
@@ -21,6 +22,7 @@ typedef struct map
   char path;
   char entrypoint;
   char exit;
+  bool valid;
 
 } map_t;
 

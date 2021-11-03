@@ -19,12 +19,13 @@
 
 // 
 
-static int load_height(map_t *map, input_t *input);
-static int load_width(map_t *map, input_t *input);
-static int load_every(map_t *map, input_t *input);
-static char next_char(input_t *input);
+static void load_height(map_t *map, input_t *input);
+static void load_width(map_t *map, input_t *input);
+static void load_every(map_t *map, input_t *input);
+static char next_char(map_t *map, input_t *input);
+
 static int to_int(char *str);
-static int validate(input_t *input);
+static bool validate(map_t *map, input_t *input);
 
 // 
 map_t *init_map(char *str)
@@ -33,32 +34,33 @@ map_t *init_map(char *str)
    input.len      = strlen(str);
    input.str      = (char*)malloc((input.len + 1) *sizeof(char));
    map_t *map     = (map_t*)malloc(sizeof(map_t));
+   map->valid     = true;
    input.cursor   = 0;
 
    strncpy(input.str, str, input.len);
    load_height(map, &input);
    load_width(map, &input);
+   load_every(map, &input);
 
-   if(!load_every(map, &input))
+   if(!map->valid)
    {
-       printf("bad input\n");
-        return NULL;
+      printf("Bad input\n");
+      free(map);
+      return NULL;
    }
    
-      printf("h: %d, w: %d, full: %c, empty: %c, path: %c, entrypoint: %c, exit: %c ", map->height, map->width, map->full, map->empty, map->path, map->entrypoint, map->exit);
-
    return map;
 }
 
-static int load_height(map_t *map , input_t *input)
+static void load_height(map_t *map , input_t *input)
 {
    char buffer[input->len];
 
    while(input->str[input->cursor] != 'x')
    {
 
-      if(validate(input))
-            return 0;
+      if(!validate(map, input))
+            return;
 
       buffer[input->cursor] = input->str[input->cursor];
       input->cursor++;
@@ -70,12 +72,12 @@ static int load_height(map_t *map , input_t *input)
 
    /*  skip x  */
    input->cursor++;
-
-   return 1;
 }
 
-static int load_width(map_t *map, input_t *input)
+static void load_width(map_t *map, input_t *input)
 {
+   if(!map->valid)
+      return;
 
    char buffer[input->len];
    const int cursor = input->cursor;
@@ -83,8 +85,8 @@ static int load_width(map_t *map, input_t *input)
 
    for(i = 0; i <= (cursor / 2); ++i)
    {
-      if(validate(input))
-            return 0;
+      if(!validate(map, input))
+            return;
       
       buffer[i] = input->str[input->cursor];
       input->cursor++;
@@ -92,40 +94,33 @@ static int load_width(map_t *map, input_t *input)
 
    buffer[++i] = '\0';
    map->width = to_int(buffer);
-
-   return 1;
-
 }
 
-static int load_every(map_t *map, input_t *input)
+static void load_every(map_t *map, input_t *input)
 {
+   if(!map->valid)
+      return;
 
-   map->full = next_char(input);
-
+   map->full = next_char(map, input);
    if(map->full == '\0' )
-      return 0;
+      return;
 
-   map->empty = next_char(input);
-
+   map->empty = next_char(map,input);
    if(map->empty == '\0')
-      return 0;
+      return;
 
-   map->path = next_char(input);
-
+   map->path = next_char(map,input);
    if(map->path == '\0')
-      return 0;
+      return;
 
-   map->entrypoint = next_char(input);
-
+   map->entrypoint = next_char(map,input);
    if(map->entrypoint == '\0')
-      return 0;
+      return;
 
-   map->exit = next_char(input);
-
+   map->exit = next_char(map, input);
    if(map->exit == '\0')
-      return 0;
+      return;
 
-   return 1;
 }
 
 
@@ -136,23 +131,26 @@ static int to_int(char str[])
 }
 
 
-static int validate(input_t *input)
+static bool validate(map_t *map, input_t *input)
 {
    const char c = input->str[input->cursor];
 
    if(c < '0' || c > '9' || c == '\0')
    {
-      printf("Bad input\n");
-      return 1;
+      map->valid = false;
+      return false;
    }
 
-   return 0;
+   return true;
 }
 
-static char next_char(input_t *input)
+static char next_char(map_t *map, input_t *input)
 {
    if(input->cursor >= (int)input->len) 
+   {
+      map->valid = false;
       return '\0';
+   }
 
   return input->str[input->cursor++];
 }
