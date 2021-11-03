@@ -10,6 +10,7 @@ typedef struct input
 {
   int cursor;
   size_t len;
+  size_t total_len;
   char *str;
 } input_t;
 
@@ -23,10 +24,13 @@ typedef struct map
   char entrypoint;
   char exit;
   bool valid;
+  input_t input;
+
+  void (*load)(struct map*);
 
 } map_t;
 
 
-map_t *init_map(char *str);
+//map_t *load_map(char *str);
 
 #endif

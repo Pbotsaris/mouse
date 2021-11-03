@@ -22,17 +22,17 @@
 int main()
 {
 
-  map_t *map = init_map("20x20* o12");
+//  map_t *map = load_map("20x20* o12");
 
 
-  if(map != NULL)
-  {
-
+//  if(map != NULL)
+//  {
+//
 //  printf("h: %d, w: %d, full: %c, empty: %c, path: %c, ep: %c, exit: %c",
 //     map->height, map->width, map->full, map->empty, map->path, map->entrypoint, map->exit);
-    free(map);
-  }
-
+//    free(map);
+//  }
+//
   
   return 0;
 }

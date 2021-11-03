@@ -17,109 +17,139 @@
  */
 #include "../include/map.h"
 
-// 
+static void load(map_t *map);
+static void load_height(map_t *map);
+static void load_width(map_t *map);
+static void load_every(map_t *map);
+static char next_char(map_t *map);
+static bool validate(map_t *map);
 
-static void load_height(map_t *map, input_t *input);
-static void load_width(map_t *map, input_t *input);
-static void load_every(map_t *map, input_t *input);
-static char next_char(map_t *map, input_t *input);
-
+static void read_file(map_t *map, char *file_path);
 static int to_int(char *str);
-static bool validate(map_t *map, input_t *input);
 
-// 
-map_t *init_map(char *str)
+map_t *init_map(char *file_path)
 {
-   input_t input;
-   input.len      = strlen(str);
-   input.str      = (char*)malloc((input.len + 1) *sizeof(char));
-   map_t *map     = (map_t*)malloc(sizeof(map_t));
-   map->valid     = true;
-   input.cursor   = 0;
+   map_t *map          = (map_t*)malloc(sizeof(map_t));
+   map->load           = load;
+   map->valid          = true;
 
-   strncpy(input.str, str, input.len);
-   load_height(map, &input);
-   load_width(map, &input);
-   load_every(map, &input);
+   read_file(map, file_path);
 
    if(!map->valid)
-   {
-      printf("Bad input\n");
-      free(map);
-      return NULL;
-   }
-   
+      printf("Error loading file.");
+
    return map;
 }
 
-static void load_height(map_t *map , input_t *input)
-{
-   char buffer[input->len];
 
-   while(input->str[input->cursor] != 'x')
+/* TODO: NEEDS WORK */
+void load(map_t *map)
+{
+
+   if(!map->valid)
+      return;
+
+   map->input.cursor  = 0;
+   load_height(map);
+   load_width(map);
+   load_every(map);
+   
+}
+
+static void load_height(map_t *map)
+{
+   char buffer[map->input.len];
+
+   while(map->input.str[map->input.cursor] != 'x')
    {
 
-      if(!validate(map, input))
+      if(!validate(map))
             return;
 
-      buffer[input->cursor] = input->str[input->cursor];
-      input->cursor++;
+      buffer[map->input.cursor] = map->input.str[map->input.cursor];
+      map->input.cursor++;
 
    }
 
-   buffer[input->cursor] = '\0';
+   buffer[map->input.cursor] = '\0';
    map->height = to_int(buffer);
 
    /*  skip x  */
-   input->cursor++;
+   map->input.cursor++;
 }
 
-static void load_width(map_t *map, input_t *input)
+static void load_width(map_t *map)
 {
    if(!map->valid)
       return;
 
-   char buffer[input->len];
-   const int cursor = input->cursor;
+   char buffer[map->input.len];
+   const int cursor = map->input.cursor;
    int i;
 
    for(i = 0; i <= (cursor / 2); ++i)
    {
-      if(!validate(map, input))
+
+      if(!validate(map))
             return;
       
-      buffer[i] = input->str[input->cursor];
-      input->cursor++;
+      buffer[i] = map->input.str[map->input.cursor];
+      map->input.cursor++;
    }
 
    buffer[++i] = '\0';
    map->width = to_int(buffer);
 }
 
-static void load_every(map_t *map, input_t *input)
+static void load_every(map_t *map)
 {
    if(!map->valid)
       return;
 
-   map->full = next_char(map, input);
+   map->full = next_char(map);
    if(map->full == '\0' )
       return;
 
-   map->empty = next_char(map,input);
+   map->empty = next_char(map);
    if(map->empty == '\0')
       return;
 
-   map->path = next_char(map,input);
+   map->path = next_char(map);
    if(map->path == '\0')
       return;
 
-   map->entrypoint = next_char(map,input);
+   map->entrypoint = next_char(map);
    if(map->entrypoint == '\0')
       return;
 
-   map->exit = next_char(map, input);
+   map->exit = next_char(map);
    if(map->exit == '\0')
       return;
+
+}
+
+static void read_file(map_t *map, char *file_path)
+{
+   FILE *file;
+   char *buffer;
+   size_t result;
+
+   if((file = fopen(file_path, "rb")) == NULL)
+      {
+      map->valid = false;
+      return;
+      }
+
+   fseek(file, 0, SEEK_END);
+   map->input.total_len = ftell(file);
+   rewind(file);
+
+   map->input.str = (char*)malloc(map->input.total_len * sizeof(char));
+
+   if(fread(map->input.str, 1, map->input.total_len, file) != map->input.total_len)
+       map->valid = false;
+
+   fclose(file);
 
 }
 
@@ -131,9 +161,9 @@ static int to_int(char str[])
 }
 
 
-static bool validate(map_t *map, input_t *input)
+static bool validate(map_t *map)
 {
-   const char c = input->str[input->cursor];
+   const char c = map->input.str[map->input.cursor];
 
    if(c < '0' || c > '9' || c == '\0')
    {
@@ -144,14 +174,14 @@ static bool validate(map_t *map, input_t *input)
    return true;
 }
 
-static char next_char(map_t *map, input_t *input)
+static char next_char(map_t *map)
 {
-   if(input->cursor >= (int)input->len) 
+   if(map->input.cursor >= (int)map->input.len) 
    {
       map->valid = false;
       return '\0';
    }
 
-  return input->str[input->cursor++];
+  return map->input.str[map->input.cursor++];
 }
 
