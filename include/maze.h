@@ -14,7 +14,7 @@ typedef struct input
   char *data;
 } input_t;
 
-typedef struct map
+typedef struct maze
 {
   int height;
   int width;
@@ -26,13 +26,13 @@ typedef struct map
   bool valid;
   input_t input;
 
-  void (*load_header)(struct map*);
+  void (*load_header)(struct maze*);
 
-} map_t;
+} maze_t;
 
 
 //map_t *load_map(char *str);
 
-map_t *init_map(char *file_path);
+maze_t *init_maze(char *file_path);
 
 #endif

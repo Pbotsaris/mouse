@@ -19,10 +19,18 @@
 #include <stdio.h>
 #include "../include/map.h"
 
-int main()
-{
+  int main(int argc, char *argv[])
+  {
+    
 
 //  map_t *map = load_map("20x20* o12");
+
+  maze_t *maze = init_maze(argv[1]);
+
+  printf("%s\n", maze->input.data);
+
+  free(maze->input.data);
+  free(maze);
 
 
 //  if(map != NULL)
