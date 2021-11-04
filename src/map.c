@@ -17,7 +17,7 @@
  */
 #include "../include/map.h"
 
-static void load(map_t *map);
+static void load_header(map_t *map);
 static void load_height(map_t *map);
 static void load_width(map_t *map);
 static void load_every(map_t *map);
@@ -30,7 +30,7 @@ static int to_int(char *str);
 map_t *init_map(char *file_path)
 {
    map_t *map          = (map_t*)malloc(sizeof(map_t));
-   map->load           = load;
+   map->load_header    = load_header;
    map->valid          = true;
 
    read_file(map, file_path);
@@ -43,7 +43,7 @@ map_t *init_map(char *file_path)
 
 
 /* TODO: NEEDS WORK */
-void load(map_t *map)
+void load_header(map_t *map)
 {
 
    if(!map->valid)
@@ -58,15 +58,15 @@ void load(map_t *map)
 
 static void load_height(map_t *map)
 {
-   char buffer[map->input.len];
+   char buffer[map->input.header_len];
 
-   while(map->input.str[map->input.cursor] != 'x')
+   while(map->input.data[map->input.cursor] != 'x')
    {
 
       if(!validate(map))
             return;
 
-      buffer[map->input.cursor] = map->input.str[map->input.cursor];
+      buffer[map->input.cursor] = map->input.data[map->input.cursor];
       map->input.cursor++;
 
    }
@@ -83,7 +83,7 @@ static void load_width(map_t *map)
    if(!map->valid)
       return;
 
-   char buffer[map->input.len];
+   char buffer[map->input.header_len];
    const int cursor = map->input.cursor;
    int i;
 
@@ -93,7 +93,7 @@ static void load_width(map_t *map)
       if(!validate(map))
             return;
       
-      buffer[i] = map->input.str[map->input.cursor];
+      buffer[i] = map->input.data[map->input.cursor];
       map->input.cursor++;
    }
 
@@ -144,10 +144,12 @@ static void read_file(map_t *map, char *file_path)
    map->input.total_len = ftell(file);
    rewind(file);
 
-   map->input.str = (char*)malloc(map->input.total_len * sizeof(char));
+   map->input.data = (char*)malloc((map->input.total_len + 1) * sizeof(char));
 
-   if(fread(map->input.str, 1, map->input.total_len, file) != map->input.total_len)
+   if(fread(map->input.data, 1, map->input.total_len, file) != map->input.total_len)
        map->valid = false;
+
+   map->input.data[map->input.total_len] = '\0';
 
    fclose(file);
 
@@ -163,7 +165,7 @@ static int to_int(char str[])
 
 static bool validate(map_t *map)
 {
-   const char c = map->input.str[map->input.cursor];
+   const char c = map->input.data[map->input.cursor];
 
    if(c < '0' || c > '9' || c == '\0')
    {
@@ -176,12 +178,12 @@ static bool validate(map_t *map)
 
 static char next_char(map_t *map)
 {
-   if(map->input.cursor >= (int)map->input.len) 
+   if(map->input.cursor >= (int)map->input.header_len) 
    {
       map->valid = false;
       return '\0';
    }
 
-  return map->input.str[map->input.cursor++];
+  return map->input.data[map->input.cursor++];
 }
 

@@ -9,9 +9,9 @@
 typedef struct input
 {
   int cursor;
-  size_t len;
+  size_t header_len;
   size_t total_len;
-  char *str;
+  char *data;
 } input_t;
 
 typedef struct map
@@ -26,11 +26,13 @@ typedef struct map
   bool valid;
   input_t input;
 
-  void (*load)(struct map*);
+  void (*load_header)(struct map*);
 
 } map_t;
 
 
 //map_t *load_map(char *str);
+
+map_t *init_map(char *file_path);
 
 #endif
