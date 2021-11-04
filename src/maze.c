@@ -17,30 +17,42 @@
  */
 #include "../include/maze.h"
 
+
+/*   PUBLIC  */
 static void load_header(maze_t *maze);
+
+/*  PRIVATE: load_header helpers  */
 static void load_height(maze_t *maze);
 static void load_width(maze_t *maze);
 static void load_every(maze_t *maze);
 static char next_char(maze_t *maze);
 static bool validate(maze_t *maze);
-
-static void read_file(maze_t *maze, char *file_path);
 static int to_int(char *str);
+
+/*   PRIVATE: init_maze helpers  */
+static void read_file(maze_t *maze, char *file_path);
+static void read_header_length(maze_t *maze);
+
+
+/*   PUBLIC FUNCTION  */
 
 maze_t *init_maze(char *file_path)
 {
-   maze_t *maze          = (maze_t*)malloc(sizeof(maze_t));
+   maze_t *maze         = (maze_t*)malloc(sizeof(maze_t));
    maze->load_header    = load_header;
    maze->valid          = true;
+   maze->input.cursor   = 0;
 
    read_file(maze, file_path);
+   read_header_length(maze);
 
    if(!maze->valid)
-      printf("Error loading file.");
+      printf("Error loading file.\n");
 
    return maze;
 }
 
+/*   PUBLIC METHOD  */
 
 /* TODO: NEEDS WORK */
 void load_header(maze_t *maze)
@@ -49,12 +61,60 @@ void load_header(maze_t *maze)
    if(!maze->valid)
       return;
 
-   maze->input.cursor  = 0;
    load_height(maze);
    load_width(maze);
    load_every(maze);
-   
+
+   /* cursor to the char of data */
+   maze->input.cursor++;
+
+ if(!maze->valid)
+    printf("Bad header format.\n");
+
 }
+
+/*    INIT_MAZE HELPERS  */
+
+static void read_file(maze_t *maze, char *file_path)
+{
+   FILE *file;
+   char *buffer;
+
+   if((file = fopen(file_path, "rb")) == NULL)
+   {
+      maze->valid = false;
+      return;
+   }
+
+   fseek(file, 0, SEEK_END);
+   maze->input.total_len = ftell(file);
+   rewind(file);
+
+   maze->input.data = (char*)malloc((maze->input.total_len + 1) * sizeof(char));
+
+   if(fread(maze->input.data, 1, maze->input.total_len, file) != maze->input.total_len)
+      maze->valid = false;
+
+   fclose(file);
+
+}
+
+static void read_header_length(maze_t *maze)
+{
+
+   if(!maze->valid)
+      return;
+
+   maze->input.data[maze->input.total_len] = '\0';
+
+   maze->input.header_len = 0;
+
+   while(maze->input.data[maze->input.header_len] != '\n')
+      maze->input.header_len++;
+
+}
+
+/*    LOAD_HEADER HELPERS  */
 
 static void load_height(maze_t *maze)
 {
@@ -128,33 +188,6 @@ static void load_every(maze_t *maze)
 
 }
 
-static void read_file(maze_t *maze, char *file_path)
-{
-   FILE *file;
-   char *buffer;
-   size_t result;
-
-   if((file = fopen(file_path, "rb")) == NULL)
-      {
-      maze->valid = false;
-      return;
-      }
-
-   fseek(file, 0, SEEK_END);
-   maze->input.total_len = ftell(file);
-   rewind(file);
-
-   maze->input.data = (char*)malloc((maze->input.total_len + 1) * sizeof(char));
-
-   if(fread(maze->input.data, 1, maze->input.total_len, file) != maze->input.total_len)
-       maze->valid = false;
-
-   maze->input.data[maze->input.total_len] = '\0';
-
-   fclose(file);
-
-}
-
 
 static int to_int(char str[])
 {
@@ -184,6 +217,6 @@ static char next_char(maze_t *maze)
       return '\0';
    }
 
-  return maze->input.data[maze->input.cursor++];
+   return maze->input.data[maze->input.cursor++];
 }
 
