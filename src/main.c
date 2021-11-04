@@ -17,7 +17,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/map.h"
+#include "../include/maze.h"
 
   int main(int argc, char *argv[])
   {
@@ -29,6 +29,12 @@
 
   printf("%s\n", maze->input.data);
 
+
+  maze->load_header(maze);
+
+  printf("h: %d, w: %d, full: %c, empty: %c, path: %c, ep: %c, exit: %c, cursor: %d\n",
+     maze->height, maze->width, maze->full, maze->empty, maze->path, maze->entrypoint, maze->exit, maze->input.cursor);
+  
   free(maze->input.data);
   free(maze);
 
