@@ -31,7 +31,7 @@ static int to_int(char *str);
 
 /*   PRIVATE: init_maze helpers  */
 static void read_file(maze_t *maze, char *file_path);
-static void read_header_length(maze_t *maze);
+static void count_header(maze_t *maze);
 
 
 /*   PUBLIC FUNCTION  */
@@ -44,7 +44,7 @@ maze_t *init_maze(char *file_path)
    maze->input.cursor   = 0;
 
    read_file(maze, file_path);
-   read_header_length(maze);
+   count_header(maze);
 
    if(!maze->valid)
       printf("Error loading file.\n");
@@ -57,7 +57,6 @@ maze_t *init_maze(char *file_path)
 /* TODO: NEEDS WORK */
 void load_header(maze_t *maze)
 {
-
    if(!maze->valid)
       return;
 
@@ -68,9 +67,8 @@ void load_header(maze_t *maze)
    /* cursor to the char of data */
    maze->input.cursor++;
 
- if(!maze->valid)
-    printf("Bad header format.\n");
-
+   if(!maze->valid)
+      printf("Bad header format.\n");
 }
 
 /*    INIT_MAZE HELPERS  */
@@ -99,9 +97,8 @@ static void read_file(maze_t *maze, char *file_path)
 
 }
 
-static void read_header_length(maze_t *maze)
+static void count_header(maze_t *maze)
 {
-
    if(!maze->valid)
       return;
 
@@ -111,7 +108,6 @@ static void read_header_length(maze_t *maze)
 
    while(maze->input.data[maze->input.header_len] != '\n')
       maze->input.header_len++;
-
 }
 
 /*    LOAD_HEADER HELPERS  */
@@ -124,7 +120,7 @@ static void load_height(maze_t *maze)
    {
 
       if(!validate(maze))
-            return;
+         return;
 
       buffer[maze->input.cursor] = maze->input.data[maze->input.cursor];
       maze->input.cursor++;
@@ -151,8 +147,8 @@ static void load_width(maze_t *maze)
    {
 
       if(!validate(maze))
-            return;
-      
+         return;
+
       buffer[i] = maze->input.data[maze->input.cursor];
       maze->input.cursor++;
    }
@@ -188,13 +184,11 @@ static void load_every(maze_t *maze)
 
 }
 
-
 static int to_int(char str[])
 {
    char *ptr;
    return (int)strtol(str, &ptr, 10);
 }
-
 
 static bool validate(maze_t *maze)
 {
@@ -219,4 +213,3 @@ static char next_char(maze_t *maze)
 
    return maze->input.data[maze->input.cursor++];
 }
-

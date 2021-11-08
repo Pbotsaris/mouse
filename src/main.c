@@ -21,19 +21,16 @@
 
   int main(int argc, char *argv[])
   {
-    
 
-//  map_t *map = load_map("20x20* o12");
+  //  map_t *map = load_map("20x20* o12");
 
   maze_t *maze = init_maze(argv[1]);
+  maze->load_header(maze);
 
   printf("%s\n", maze->input.data);
 
-
-  maze->load_header(maze);
-
-  printf("h: %d, w: %d, full: %c, empty: %c, path: %c, ep: %c, exit: %c, cursor: %d\n",
-     maze->height, maze->width, maze->full, maze->empty, maze->path, maze->entrypoint, maze->exit, maze->input.cursor);
+  //printf("h: %d, w: %d, full: %c, empty: %c, path: %c, ep: %c, exit: %c, cursor: %d\n",
+  //   maze->height, maze->width, maze->full, maze->empty, maze->path, maze->entrypoint, maze->exit, maze->input.cursor);
   
   free(maze->input.data);
   free(maze);

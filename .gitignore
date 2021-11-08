@@ -1,2 +1,2 @@
-obj/*.c
+obj/*.o
 bin/my_mouse
