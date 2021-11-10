@@ -64,14 +64,14 @@ void load_header(maze_t *maze)
    load_width(maze);
    load_every(maze);
 
-   /* cursor to the char of data */
+   /* cursor to the first char of data */
    maze->input.cursor++;
 
    if(!maze->valid)
       printf("Bad header format.\n");
 }
 
-/*    INIT_MAZE HELPERS  */
+/*   INIT_MAZE HELPERS  */
 
 static void read_file(maze_t *maze, char *file_path)
 {
@@ -114,6 +114,10 @@ static void count_header(maze_t *maze)
 
 static void load_height(maze_t *maze)
 {
+
+   if(!maze->valid)
+      return;
+
    char buffer[maze->input.header_len];
 
    while(maze->input.data[maze->input.cursor] != 'x')
@@ -143,9 +147,10 @@ static void load_width(maze_t *maze)
    const int cursor = maze->input.cursor;
    int i;
 
-   for(i = 0; i <= (cursor / 2); ++i)
+   /* ternary necessary in case of a single digit height */
+   for(i = 0; i <= (cursor == 2 ? 0 : cursor / 2); ++i)
    {
-
+      
       if(!validate(maze))
          return;
 
@@ -181,7 +186,6 @@ static void load_every(maze_t *maze)
    maze->exit = next_char(maze);
    if(maze->exit == '\0')
       return;
-
 }
 
 static int to_int(char str[])

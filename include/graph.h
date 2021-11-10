@@ -3,8 +3,11 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include "../include/maze.h"
 
 #define EDGES_COUNT 3
+
+typedef enum edges {NEXT, UNDER, DIAGONAL}edges_t;
 
 typedef struct node{
   int value;
@@ -20,7 +23,8 @@ typedef struct graph{
  int index;
  node_t **nodes; 
 
- void (*add_node) (struct graph*, int);
+ void (*load_maze) (struct graph*, struct maze*);
+ void (*load_edges) (struct graph*, struct maze*);
  void (*free) (struct graph*);
 }graph_t;
 

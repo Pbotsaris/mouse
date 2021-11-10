@@ -1,0 +1,87 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/pedro/dev/mouse/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20210905.0/
+$(OBJ)/%.o	Makefile	/^$(OBJ)\/%.o: $(SRC)\/%.c $/;"	t
+$(TARGET)	Makefile	/^$(TARGET): $(OBJS)$/;"	t
+BIN	Makefile	/^BIN=bin$/;"	m
+CC	Makefile	/^CC=gcc$/;"	m
+EDGES_COUNT	include/graph.h	/^#define EDGES_COUNT /;"	d
+GRAPH_H	include/graph.h	/^#define GRAPH_H$/;"	d
+MAP_H	include/maze.h	/^#define MAP_H$/;"	d
+MEMO_H	include/memo.h	/^#define MEMO_H$/;"	d
+OBJ	Makefile	/^OBJ=obj$/;"	m
+OBJS	Makefile	/^OBJS=$(patsubst $(SRC)\/%.c, $(OBJ)\/%.o, $(SRCS))$/;"	m
+RM	Makefile	/^RM=rm -rf$/;"	m
+SRC	Makefile	/^SRC=src$/;"	m
+SRCS	Makefile	/^SRCS=$(wildcard $(SRC)\/*.c)$/;"	m
+TARGET	Makefile	/^TARGET=$(BIN)\/my_mouse$/;"	m
+_Bool	stdbool.h	/^#define _Bool /;"	d
+_STDBOOL_H	stdbool.h	/^#define _STDBOOL_H$/;"	d
+__bool_true_false_are_defined	stdbool.h	/^#define __bool_true_false_are_defined /;"	d
+add_node	include/graph.h	/^ void (*add_node) (struct graph*, int);$/;"	m	struct:graph	typeref:typename:void (*)(struct graph *,int)
+add_node	src/graph.c	/^static void add_node(graph_t *graph, int value)$/;"	f	typeref:typename:void	file:
+all	Makefile	/^all: $(TARGET)$/;"	t
+bool	stdbool.h	/^#define bool /;"	d
+clean	Makefile	/^clean:$/;"	t
+count_header	src/maze.c	/^static void count_header(maze_t *maze)$/;"	f	typeref:typename:void	file:
+cursor	include/maze.h	/^  int cursor;$/;"	m	struct:input	typeref:typename:int
+data	include/maze.h	/^  char *data;$/;"	m	struct:input	typeref:typename:char *
+edges	include/graph.h	/^  struct node *edges[EDGES_COUNT];$/;"	m	struct:node	typeref:struct:node * []
+empty	include/maze.h	/^  char empty;$/;"	m	struct:maze	typeref:typename:char
+entrypoint	include/maze.h	/^  char entrypoint;$/;"	m	struct:maze	typeref:typename:char
+exit	include/maze.h	/^  char exit;$/;"	m	struct:maze	typeref:typename:char
+false	stdbool.h	/^#define false /;"	d
+free	include/graph.h	/^ void (*free) (struct graph*);$/;"	m	struct:graph	typeref:typename:void (*)(struct graph *)
+free_graph	src/graph.c	/^static void free_graph(graph_t *graph)$/;"	f	typeref:typename:void	file:
+full	include/maze.h	/^  char full;$/;"	m	struct:maze	typeref:typename:char
+graph	include/graph.h	/^typedef struct graph{$/;"	s
+graph_t	include/graph.h	/^}graph_t;$/;"	t	typeref:struct:graph
+header_len	include/maze.h	/^  size_t header_len;$/;"	m	struct:input	typeref:typename:size_t
+height	include/maze.h	/^  int height;$/;"	m	struct:maze	typeref:typename:int
+index	include/graph.h	/^ int index;$/;"	m	struct:graph	typeref:typename:int
+index	include/memo.h	/^  int index;$/;"	m	struct:memo	typeref:typename:int
+init_graph	src/graph.c	/^graph_t *init_graph(size_t length)$/;"	f	typeref:typename:graph_t *
+init_maze	src/maze.c	/^maze_t *init_maze(char *file_path)$/;"	f	typeref:typename:maze_t *
+input	include/maze.h	/^  input_t input;$/;"	m	struct:maze	typeref:typename:input_t
+input	include/maze.h	/^typedef struct input$/;"	s
+input_t	include/maze.h	/^} input_t;$/;"	t	typeref:struct:input
+len	include/graph.h	/^ size_t len;$/;"	m	struct:graph	typeref:typename:size_t
+load_every	src/maze.c	/^static void load_every(maze_t *maze)$/;"	f	typeref:typename:void	file:
+load_header	include/maze.h	/^  void (*load_header)(struct maze*);$/;"	m	struct:maze	typeref:typename:void (*)(struct maze *)
+load_header	src/maze.c	/^void load_header(maze_t *maze)$/;"	f	typeref:typename:void
+load_height	src/maze.c	/^static void load_height(maze_t *maze)$/;"	f	typeref:typename:void	file:
+load_width	src/maze.c	/^static void load_width(maze_t *maze)$/;"	f	typeref:typename:void	file:
+main	src/main.c	/^  int main(int argc, char *argv[])$/;"	f	typeref:typename:int
+max	include/memo.h	/^  int max;$/;"	m	struct:memo	typeref:typename:int
+maze	include/maze.h	/^typedef struct maze$/;"	s
+maze_t	include/maze.h	/^} maze_t;$/;"	t	typeref:struct:maze
+memo	include/memo.h	/^typedef struct memo{$/;"	s
+memo_t	include/memo.h	/^  }memo_t;$/;"	t	typeref:struct:memo
+next_char	src/maze.c	/^static char next_char(maze_t *maze)$/;"	f	typeref:typename:char	file:
+node	include/graph.h	/^typedef struct node{$/;"	s
+node_t	include/graph.h	/^}node_t;$/;"	t	typeref:struct:node
+nodes	include/graph.h	/^ node_t **nodes; $/;"	m	struct:graph	typeref:typename:node_t **
+parent	include/graph.h	/^  struct node *parent;$/;"	m	struct:node	typeref:struct:node *
+path	include/maze.h	/^  char path;$/;"	m	struct:maze	typeref:typename:char
+pos	include/memo.h	/^  int pos[2];$/;"	m	struct:memo	typeref:typename:int[2]
+prev	include/memo.h	/^  int prev;$/;"	m	struct:memo	typeref:typename:int
+read_file	src/maze.c	/^static void read_file(maze_t *maze, char *file_path)$/;"	f	typeref:typename:void	file:
+row	include/memo.h	/^  int row;$/;"	m	struct:memo	typeref:typename:int
+store	include/memo.h	/^  char *store;$/;"	m	struct:memo	typeref:typename:char *
+to_int	src/maze.c	/^static int to_int(char str[])$/;"	f	typeref:typename:int	file:
+total_len	include/maze.h	/^  size_t total_len;$/;"	m	struct:input	typeref:typename:size_t
+true	stdbool.h	/^#define true /;"	d
+type	include/graph.h	/^  char type;$/;"	m	struct:node	typeref:typename:char
+valid	include/maze.h	/^  bool valid;$/;"	m	struct:maze	typeref:typename:bool
+validate	src/maze.c	/^static bool validate(maze_t *maze)$/;"	f	typeref:typename:bool	file:
+value	include/graph.h	/^  int value;$/;"	m	struct:node	typeref:typename:int
+visited	include/graph.h	/^  bool visited;$/;"	m	struct:node	typeref:typename:bool
+width	include/maze.h	/^  int width;$/;"	m	struct:maze	typeref:typename:int
