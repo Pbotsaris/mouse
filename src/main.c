@@ -41,13 +41,18 @@ int main(int argc, char *argv[])
     graph->set_exit_entrypoint(graph, maze);
 
     printf("entry = %c exit = %c", graph->entrypoint->value, graph->exit->value);
+
+
+    node_t *node = graph->nodes[12];
+
+    printf("node: %c, next: %c, prev:%c under: %c, over: %c \n", node->value, node->edges[NEXT]->value, node->edges[PREV]->value, node->edges[UNDER]->value, node->edges[OVER]->value);
+
+
+
     graph->free(graph);
   }
   else
-     free(maze->input.data);
-
-  //  node_t *node = graph->nodes[7];
-  // printf("node: %c, next: %c, under: %c, diagonal: %c \n", node->value, node->edges[NEXT]->value, node->edges[UNDER]->value, node->edges[DIAGONAL]->value);
+    free(maze->input.data);
 
   free(maze);
 

@@ -26,7 +26,7 @@ static void set_exit_entrypoint(graph_t *graph, maze_t *maze);
 static void free_graph(graph_t *graph);
 
 /* PRIVATE */
-static void add_edges(graph_t *graph, int next, int under, int diagonal);
+static void add_edges(graph_t *graph, int next, int prev,  int under, int over);
 static void add_node(graph_t *graph, int value);
 static void set_entrypoint(graph_t *graph, maze_t *maze);
 static void set_exit(graph_t *graph, maze_t *maze);
@@ -57,14 +57,18 @@ static void load_from_maze(graph_t *graph, maze_t *maze)
    {
       if( maze->input.data[maze->input.cursor] != '\n')
          add_node(graph, maze->input.data[maze->input.cursor]);
+
       maze->input.cursor++;
    }
 
-   /* input allocation is not needed rom this point on */
+   /* input data is not needed from this point on */
    free(maze->input.data);
 } 
 
-
+ /*     o
+ **    pxn    n = next       p = previous      x = current
+ **     u     u = under      d = diagonal
+ */
 static void load_edges(graph_t *graph, maze_t *maze)
 {
    graph->index           = 0;
@@ -73,24 +77,49 @@ static void load_edges(graph_t *graph, maze_t *maze)
 
    while(graph->index < (int)graph->len)
    {
-       /*
-       **    xn     x = current    n = next
-       **    ud     u = under      d = diagonal
-       */
-
       int next            =  graph->index + 1;
+      int prev            =  graph->index - 1;
       int under           =  graph->index + maze->width; 
-      int diagonal        =  graph->index + maze->width + 1; 
+      int over            =  graph->index - maze->width;
 
-      if(column == maze->width - 1 && row == maze->height - 1)
-         add_edges(graph, IS_NULL, IS_NULL, IS_NULL);
+
+      /*  first row & col  */
+       if(column == 0 && row == 0)
+         add_edges(graph, next, IS_NULL, under , IS_NULL);
+
+      /*  last row & col  */
+      else if(column == maze->width - 1 && row == maze->height - 1)
+         add_edges(graph, IS_NULL, prev,  IS_NULL, over);
+
+      /*  first col  */
+      else if(column == 0)
+            add_edges(graph, next, IS_NULL, under, over);
+
+      /*  first row  */
+       else if(row == 0)
+            add_edges(graph, next, prev, under, IS_NULL);
+
+      /*  last  row  */
       else if(row == maze->height - 1)
-         add_edges(graph, next, IS_NULL, IS_NULL);
+      {
+         if(column == 0)
+            add_edges(graph, next, IS_NULL, IS_NULL, over);
+         else
+            add_edges(graph, next, prev, IS_NULL, over);
+      }
 
+      /*  last  col  */
       else if(column == maze->width - 1)
-         add_edges(graph, IS_NULL, under, IS_NULL);
+      {
+         if(row == 0)
+            add_edges(graph, IS_NULL, prev, under, IS_NULL);
+         else  
+            add_edges(graph, IS_NULL, prev, under, over);
+      }
+
+      /*  rest  */
       else
-         add_edges(graph, next, under, diagonal);
+         add_edges(graph, next, prev, under, over);
 
       graph->index++;
       if(column <  maze->width - 1)
@@ -126,7 +155,7 @@ static void free_graph(graph_t *graph)
 
 /*  PRIVATE */
 
-static void add_edges(graph_t *graph, int next, int under, int diagonal)
+static void add_edges(graph_t *graph, int next, int prev, int under, int over)
 {
 
    if(next >= 0)
@@ -134,15 +163,20 @@ static void add_edges(graph_t *graph, int next, int under, int diagonal)
    else
       graph->nodes[graph->index]->edges[NEXT] = NULL;
 
+   if(prev >= 0)
+      graph->nodes[graph->index]->edges[PREV] = graph->nodes[prev];
+   else
+      graph->nodes[graph->index]->edges[PREV] = NULL;
+
    if(under >= 0)
       graph->nodes[graph->index]->edges[UNDER] = graph->nodes[under];
    else
       graph->nodes[graph->index]->edges[UNDER] = NULL;
 
-   if(diagonal >= 0)
-      graph->nodes[graph->index]->edges[DIAGONAL] = graph->nodes[diagonal];
+   if(over >= 0)
+      graph->nodes[graph->index]->edges[OVER] = graph->nodes[over];
    else
-      graph->nodes[graph->index]->edges[DIAGONAL] = NULL;
+      graph->nodes[graph->index]->edges[OVER] = NULL;
 }
 
 

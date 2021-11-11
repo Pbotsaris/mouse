@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include "../include/maze.h"
 
-#define EDGES_COUNT 3
+#define EDGES_COUNT 4
 #define IS_NULL -1
 
-typedef enum edges {NEXT, UNDER, DIAGONAL}edges_t;
+typedef enum edges {NEXT, PREV,  UNDER, OVER}edges_t;
 
 typedef struct node{
   int value;
