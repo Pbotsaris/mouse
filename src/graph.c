@@ -17,19 +17,22 @@
  */
 
 #include <stdlib.h>
-
 #include "../include/graph.h"
 
-static void add_node(graph_t *graph, int value);
-static void free_graph(graph_t *graph);
+/* PUBLIC METHODS */
 static void load_from_maze(graph_t *graph, maze_t *maze);
 static void load_edges(graph_t *graph, maze_t *maze);
+static void set_exit_entrypoint(graph_t *graph, maze_t *maze);
+static void free_graph(graph_t *graph);
+
+/* PRIVATE */
 static void add_edges(graph_t *graph, int next, int under, int diagonal);
+static void add_node(graph_t *graph, int value);
 static void set_entrypoint(graph_t *graph, maze_t *maze);
 static void set_exit(graph_t *graph, maze_t *maze);
-static void set_exit_entrypoint(graph_t *graph, maze_t *maze);
 
 
+/*  PUBLIC FUNCTIONS */
 graph_t *init_graph(size_t length)
 {
    graph_t *graph              = (graph_t*)malloc(sizeof(graph_t));
@@ -45,6 +48,9 @@ graph_t *init_graph(size_t length)
    return graph;
 }
 
+
+/*  PUBLIC METHODS */
+   
 static void load_from_maze(graph_t *graph, maze_t *maze)
 {
    while(maze->input.data[maze->input.cursor] != '\0')
@@ -53,10 +59,11 @@ static void load_from_maze(graph_t *graph, maze_t *maze)
          add_node(graph, maze->input.data[maze->input.cursor]);
       maze->input.cursor++;
    }
-    
-      /* dealloc input mem */
-      free(maze->input.data);
+
+   /* input allocation is not needed rom this point on */
+   free(maze->input.data);
 } 
+
 
 static void load_edges(graph_t *graph, maze_t *maze)
 {
@@ -66,14 +73,13 @@ static void load_edges(graph_t *graph, maze_t *maze)
 
    while(graph->index < (int)graph->len)
    {
-      /*
-            **    xn     x = current    n = next
-            **    ud     u = under      d = diagonal
-       
-         */
+       /*
+       **    xn     x = current    n = next
+       **    ud     u = under      d = diagonal
+       */
 
       int next            =  graph->index + 1;
-      int under           =  graph->index + maze->width; // +1 to skip \n
+      int under           =  graph->index + maze->width; 
       int diagonal        =  graph->index + maze->width + 1; 
 
       if(column == maze->width - 1 && row == maze->height - 1)
@@ -97,12 +103,28 @@ static void load_edges(graph_t *graph, maze_t *maze)
    }
 }
 
-static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
-   {
-      set_entrypoint(graph, maze);
-      set_exit(graph, maze);
 
+static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
+{
+   set_entrypoint(graph, maze);
+   set_exit(graph, maze);
+
+}
+
+
+static void free_graph(graph_t *graph)
+{
+   for(size_t i = 0; i < graph->len; ++i)
+   {
+      free(graph->nodes[i]);
    }
+
+   free(graph->nodes);
+   free(graph);
+}
+
+
+/*  PRIVATE */
 
 static void add_edges(graph_t *graph, int next, int under, int diagonal)
 {
@@ -123,6 +145,7 @@ static void add_edges(graph_t *graph, int next, int under, int diagonal)
       graph->nodes[graph->index]->edges[DIAGONAL] = NULL;
 }
 
+
 static void add_node(graph_t *graph, int value)
 {
    node_t *node = (node_t*)malloc(sizeof(node_t));
@@ -132,18 +155,6 @@ static void add_node(graph_t *graph, int value)
    graph->nodes[graph->index] = node;
    graph->index++;
 
-}
-
-
-static void free_graph(graph_t *graph)
-{
-   for(size_t i = 0; i < graph->len; ++i)
-   {
-      free(graph->nodes[i]);
-   }
-
-   free(graph->nodes);
-   free(graph);
 }
 
 
@@ -159,8 +170,8 @@ static void set_entrypoint(graph_t *graph, maze_t *maze)
       }
    }
 
-      printf("Maze does not contain an entry point\n");
-      graph->valid = false;
+   printf("Maze does not contain an entry point\n");
+   graph->valid = false;
 
 }
 
@@ -176,10 +187,10 @@ static void set_exit(graph_t *graph, maze_t *maze)
          graph->exit = graph->nodes[i];
          return;
       }
-    }
+   }
 
-      printf("Maze does not contain an exit point\n");
-      graph->valid = false;
+   printf("Maze does not contain an exit point\n");
+   graph->valid = false;
 
 }
 
