@@ -1,5 +1,5 @@
-#ifndef MAP_H
-#define MAP_H
+#ifndef MAZE_H
+#define MAZE_H
 
 #include <stdlib.h>
 #include <string.h>

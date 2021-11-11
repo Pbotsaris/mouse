@@ -6,6 +6,7 @@
 #include "../include/maze.h"
 
 #define EDGES_COUNT 3
+#define IS_NULL -1
 
 typedef enum edges {NEXT, UNDER, DIAGONAL}edges_t;
 
@@ -21,10 +22,14 @@ typedef struct node{
 typedef struct graph{
  size_t len;
  int index;
+ node_t *entrypoint;
+ node_t *exit;
  node_t **nodes; 
+ bool valid;
 
- void (*load_maze) (struct graph*, struct maze*);
+ void (*load_from_maze) (struct graph*, struct maze*);
  void (*load_edges) (struct graph*, struct maze*);
+ void (*set_exit_entrypoint) (struct graph*, struct maze*);
  void (*free) (struct graph*);
 }graph_t;
 

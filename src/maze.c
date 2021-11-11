@@ -54,7 +54,6 @@ maze_t *init_maze(char *file_path)
 
 /*   PUBLIC METHOD  */
 
-/* TODO: NEEDS WORK */
 void load_header(maze_t *maze)
 {
    if(!maze->valid)

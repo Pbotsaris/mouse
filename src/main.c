@@ -36,8 +36,11 @@ int main(int argc, char *argv[])
   if(maze->valid)
   {
     graph_t *graph = init_graph(maze->height * maze->width);
-    graph->load_maze(graph, maze);
+    graph->load_from_maze(graph, maze);
     graph->load_edges(graph, maze);
+    graph->set_exit_entrypoint(graph, maze);
+
+    printf("entry = %c exit = %c", graph->entrypoint->value, graph->exit->value);
     graph->free(graph);
   }
   else
