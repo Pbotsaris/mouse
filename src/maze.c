@@ -75,7 +75,6 @@ void load_header(maze_t *maze)
 static void read_file(maze_t *maze, char *file_path)
 {
    FILE *file;
-   char *buffer;
 
    if((file = fopen(file_path, "rb")) == NULL)
    {

@@ -4,20 +4,33 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "../include/maze.h"
+#include "../include/queue.h"
 
 #define EDGES_COUNT 4
 #define IS_NULL -1
 
-typedef enum edges {NEXT, PREV,  UNDER, OVER}edges_t;
+typedef enum edges {NEXT, PREV, UNDER, OVER}edges_t;
 
 typedef struct node{
   int value;
   char type;
   struct node *edges[EDGES_COUNT];
   struct node *parent;
+  struct node *next_in_queue;
   bool visited;
 
 }node_t;
+
+
+typedef struct queue{
+  node_t *front;
+  node_t * rear;
+
+void (*enqueue) (struct queue*, node_t*);
+node_t* (*dequeue) (struct queue*);
+
+}queue_t; 
+
 
 typedef struct graph{
  size_t len;
@@ -25,6 +38,7 @@ typedef struct graph{
  node_t *entrypoint;
  node_t *exit;
  node_t **nodes; 
+ queue_t *queue;
  bool valid;
 
  void (*load_from_maze) (struct graph*, struct maze*);
@@ -34,6 +48,7 @@ typedef struct graph{
 }graph_t;
 
 graph_t *init_graph(size_t length);
+queue_t *init_queue();
 
 #endif
 

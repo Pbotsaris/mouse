@@ -36,19 +36,33 @@ int main(int argc, char *argv[])
   if(maze->valid)
   {
     graph_t *graph = init_graph(maze->height * maze->width);
+    graph->queue   = init_queue();
     graph->load_from_maze(graph, maze);
     graph->load_edges(graph, maze);
     graph->set_exit_entrypoint(graph, maze);
+    
+//    graph->queue->enqueue(graph->queue, graph->nodes[5]);
+//    graph->queue->enqueue(graph->queue, graph->nodes[13]);
+//    graph->queue->enqueue(graph->queue, graph->nodes[1]);
+//
+//    node_t *node = graph->queue->dequeue(graph->queue);
+//    printf("node infront: %c\n", node->value);
+//    node = graph->queue->dequeue(graph->queue);
+//    printf("node next: %c\n", node->value);
+//    node = graph->queue->dequeue(graph->queue);
+//    printf("node last: %c\n", node->value);
+//
+//    printf("entry = %c exit = %c", graph->entrypoint->value, graph->exit->value);
+//
 
-    printf("entry = %c exit = %c", graph->entrypoint->value, graph->exit->value);
+
+//    node_t *node = graph->nodes[12];
+//
+//    printf("node: %c, next: %c, prev:%c under: %c, over: %c \n", node->value, node->edges[NEXT]->value, node->edges[PREV]->value, node->edges[UNDER]->value, node->edges[OVER]->value);
+//
 
 
-    node_t *node = graph->nodes[12];
-
-    printf("node: %c, next: %c, prev:%c under: %c, over: %c \n", node->value, node->edges[NEXT]->value, node->edges[PREV]->value, node->edges[UNDER]->value, node->edges[OVER]->value);
-
-
-
+    free(graph->queue);
     graph->free(graph);
   }
   else
