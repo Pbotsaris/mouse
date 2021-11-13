@@ -68,6 +68,12 @@ void load_header(maze_t *maze)
 
    if(!maze->valid)
       printf("MAP ERROR: Bad header format.\n");
+
+   if(maze->height > 1000 || maze->width > 1000)
+   {
+      maze->valid = false;
+      printf("MAP ERROR: Max map length exceded.\n");
+   }
 }
 
 /*   INIT_MAZE HELPERS  */
