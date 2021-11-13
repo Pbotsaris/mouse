@@ -71,7 +71,7 @@ static void load_from_maze(graph_t *graph, maze_t *maze)
 
  /*     o
  **    pxn    n = next       p = previous      x = current
- **     u     u = under      d = diagonal
+ **     u     u = under      o = over
  */
 static void load_edges(graph_t *graph, maze_t *maze)
 {
