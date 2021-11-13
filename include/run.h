@@ -21,7 +21,6 @@
 #include "../include/graph.h"
 #include "../include/maze.h"
 
-
 void run(int argc, char *argv[]);
 
 #endif
