@@ -24,6 +24,7 @@ static void load_from_maze(graph_t *graph, maze_t *maze);
 static void load_edges(graph_t *graph, maze_t *maze);
 static void set_exit_entrypoint(graph_t *graph, maze_t *maze);
 static void write_path(graph_t *graph, maze_t *maze);
+static void print(graph_t *graph, maze_t *maze);
 static void free_graph(graph_t *graph);
 static void search_path(graph_t *graph);
 
@@ -47,6 +48,8 @@ graph_t *init_graph(size_t length)
    graph->load_edges           = load_edges;
    graph->set_exit_entrypoint  = set_exit_entrypoint;
    graph->search_path          = search_path;
+   graph->write_path           = write_path;
+   graph->print                = print;
 
    return graph;
 }
@@ -55,19 +58,7 @@ graph_t *init_graph(size_t length)
 /*  PUBLIC METHODS */
 
 
-static void write_path(graph_t *graph, maze_t *maze)
-{
-   node_t *next;
 
-   while(next)
-   {
-      next->value = maze->path;
-      next = next->parent;
-   }
-
-}
-
-   
 static void load_from_maze(graph_t *graph, maze_t *maze)
 {
    while(maze->input.data[maze->input.cursor] != '\0')
@@ -149,7 +140,6 @@ static void load_edges(graph_t *graph, maze_t *maze)
    }
 }
 
-
 static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
 {
    set_entrypoint(graph, maze);
@@ -157,6 +147,48 @@ static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
 
 }
 
+
+static void write_path(graph_t *graph, maze_t *maze)
+{
+   node_t *next = graph->exit->parent;
+
+   if(next == NULL)
+   {
+      graph->valid = false;
+      return;
+   }
+
+   while(next != graph->entrypoint)
+   {
+      if(next == NULL)
+      {
+         graph->valid = false;
+         break;
+      }
+
+      next->value = maze->path;
+      next = next->parent;
+   }
+
+}
+
+static void print(graph_t *graph, maze_t *maze)
+{
+   int column         = 0;
+
+   for(int i = 0; i < graph->len; i++)
+   { 
+      printf("%c", graph->nodes[i]->value);
+
+      if(column <  maze->width - 1)
+         column++;
+      else
+      {
+         printf("\n");
+         column = 0;
+      }
+    }
+}
 
 static void search_path(graph_t *graph)
 {
@@ -171,18 +203,18 @@ static void search_path(graph_t *graph)
 
       if(current == graph->exit)
          break;
-    
+
       for(int i = 0; i < EDGES_COUNT; i++)
       {
          node_t * neighbor = current->edges[i];
 
-          if( neighbor != NULL && !neighbor->visited)
-          {
-             neighbor->visited = true;
-             neighbor->parent = current;
-             if(neighbor->type == EMPTY || neighbor->type == IO)
-                 queue->enqueue(queue, neighbor);
-          }
+         if( neighbor != NULL && !neighbor->visited)
+         {
+            neighbor->visited = true;
+            neighbor->parent = current;
+            if(neighbor->type == EMPTY || neighbor->type == IO)
+               queue->enqueue(queue, neighbor);
+         }
       }
    }
 
@@ -235,6 +267,7 @@ static void add_node(graph_t *graph, maze_t *maze)
    node_t *node = (node_t*)malloc(sizeof(node_t));
    node->value = maze->input.data[maze->input.cursor];
    node->visited = false;
+   node->parent = NULL;
 
    if(node->value == maze->full)
       node->type = FULL;
