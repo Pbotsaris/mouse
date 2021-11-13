@@ -3,7 +3,7 @@ OBJ=obj
 BIN=bin
 
 CFLAGS +=-W  -Wall -Wextra -g3 -Iinclude -fsanitize=address
-CFLAGS2 +=-W -g3 -Iinclude
+CFLAGS_NO_SAN +=-W -Wall -Wextra -g3 -Iinclude 
 
 CC=gcc
 TARGET=$(BIN)/my_mouse
@@ -19,6 +19,12 @@ $(TARGET): $(OBJS)
 
 $(OBJ)/%.o: $(SRC)/%.c 
 	${CC} ${CFLAGS} -c $< -o $@
+
+let_leak: $(OBJS)
+	$(CC) -o $(TARGET) $(OBJS) $(CFLAGS_NO_SAN) 
+
+$(OBJ)/%.o: $(SRC)/%.c 
+	${CC} ${CFLAGS_NO_SAN} -c $< -o $@
 
 clean:
 	$(RM) $(TARGET) $(BIN)/*.dSYM $(OBJ)/*.o 
