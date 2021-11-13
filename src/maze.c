@@ -22,9 +22,10 @@
 static void load_header(maze_t *maze);
 
 /*  PRIVATE: load_header helpers  */
-static void load_height(maze_t *maze);
-static void load_width(maze_t *maze);
+static void load_dimensions(maze_t *maze, fun_ptr load);
 static void load_every(maze_t *maze);
+static void load_height(maze_t *maze, char *buffer);
+static void load_width(maze_t *maze, char *buffer);
 static char next_char(maze_t *maze);
 static bool validate(maze_t *maze);
 static int to_int(char *str);
@@ -59,8 +60,9 @@ void load_header(maze_t *maze)
    if(!maze->valid)
       return;
 
-   load_height(maze);
-   load_width(maze);
+   load_dimensions(maze, load_height);
+   maze->input.cursor++;
+   load_dimensions(maze, load_width);
    load_every(maze);
 
    /* cursor to the first char of data */
@@ -116,54 +118,30 @@ static void count_header(maze_t *maze)
 
 /*    LOAD_HEADER HELPERS  */
 
-static void load_height(maze_t *maze)
+static void load_dimensions(maze_t *maze, fun_ptr load)
 {
 
    if(!maze->valid)
       return;
 
+   int index = 0;
+
    char buffer[maze->input.header_len];
 
-   while(maze->input.data[maze->input.cursor] != 'x')
+   while(maze->input.data[maze->input.cursor] >= '0' && maze->input.data[maze->input.cursor] <= '9')
    {
 
       if(!validate(maze))
          return;
 
-      buffer[maze->input.cursor] = maze->input.data[maze->input.cursor];
+      buffer[index] = maze->input.data[maze->input.cursor];
       maze->input.cursor++;
+      index++;
 
    }
+   buffer[index] = '\0';
 
-   buffer[maze->input.cursor] = '\0';
-   maze->height = to_int(buffer);
-
-   /*  skip x  */
-   maze->input.cursor++;
-}
-
-static void load_width(maze_t *maze)
-{
-   if(!maze->valid)
-      return;
-
-   char buffer[maze->input.header_len];
-   const int cursor = maze->input.cursor;
-   int i;
-
-   /* ternary necessary in case of a single digit height */
-   for(i = 0; i <= (cursor == 2 ? 0 : cursor / 2); ++i)
-   {
-      
-      if(!validate(maze))
-         return;
-
-      buffer[i] = maze->input.data[maze->input.cursor];
-      maze->input.cursor++;
-   }
-
-   buffer[++i] = '\0';
-   maze->width = to_int(buffer);
+   load(maze, buffer);
 }
 
 static void load_every(maze_t *maze)
@@ -191,6 +169,10 @@ static void load_every(maze_t *maze)
    if(maze->exit == '\0')
       return;
 }
+
+static void load_height(maze_t *maze, char *buffer) { maze->height = to_int(buffer); }
+static void load_width(maze_t *maze, char *buffer) { maze->width = to_int(buffer); }
+
 
 static int to_int(char str[])
 {
@@ -221,3 +203,6 @@ static char next_char(maze_t *maze)
 
    return maze->input.data[maze->input.cursor++];
 }
+
+
+
