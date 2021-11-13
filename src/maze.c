@@ -67,7 +67,7 @@ void load_header(maze_t *maze)
    maze->input.cursor++;
 
    if(!maze->valid)
-      printf("Bad header format.\n");
+      printf("MAP ERROR: Bad header format.\n");
 }
 
 /*   INIT_MAZE HELPERS  */

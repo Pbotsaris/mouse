@@ -56,7 +56,7 @@ static void search(maze_t *maze)
         printf("%d Steps!\n", steps);
     }
     else
-      printf("Did not find a valid path\n");
+      printf("MAP ERROR: Did not find a valid path\n");
 
     graph->free(graph);
   }

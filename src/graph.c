@@ -296,7 +296,7 @@ static void set_entrypoint(graph_t *graph, maze_t *maze)
       }
    }
 
-   printf("Maze does not contain an entry point\n");
+   printf("MAP ERROR: does not contain an entry point\n");
    graph->valid = false;
 
 }
@@ -315,7 +315,7 @@ static void set_exit(graph_t *graph, maze_t *maze)
       }
    }
 
-   printf("Maze does not contain an exit point\n");
+   printf("MAP ERROR: does not contain an exit point\n");
    graph->valid = false;
 
 }
