@@ -23,11 +23,13 @@
 static void load_from_maze(graph_t *graph, maze_t *maze);
 static void load_edges(graph_t *graph, maze_t *maze);
 static void set_exit_entrypoint(graph_t *graph, maze_t *maze);
+static void write_path(graph_t *graph, maze_t *maze);
 static void free_graph(graph_t *graph);
+static void search_path(graph_t *graph);
 
 /* PRIVATE */
 static void add_edges(graph_t *graph, int next, int prev,  int under, int over);
-static void add_node(graph_t *graph, int value);
+static void add_node(graph_t *graph, maze_t *maze);
 static void set_entrypoint(graph_t *graph, maze_t *maze);
 static void set_exit(graph_t *graph, maze_t *maze);
 
@@ -44,19 +46,34 @@ graph_t *init_graph(size_t length)
    graph->free                 = free_graph;
    graph->load_edges           = load_edges;
    graph->set_exit_entrypoint  = set_exit_entrypoint;
+   graph->search_path          = search_path;
 
    return graph;
 }
 
 
 /*  PUBLIC METHODS */
+
+
+static void write_path(graph_t *graph, maze_t *maze)
+{
+   node_t *next;
+
+   while(next)
+   {
+      next->value = maze->path;
+      next = next->parent;
+   }
+
+}
+
    
 static void load_from_maze(graph_t *graph, maze_t *maze)
 {
    while(maze->input.data[maze->input.cursor] != '\0')
    {
       if( maze->input.data[maze->input.cursor] != '\n')
-         add_node(graph, maze->input.data[maze->input.cursor]);
+         add_node(graph, maze);
 
       maze->input.cursor++;
    }
@@ -141,6 +158,39 @@ static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
 }
 
 
+static void search_path(graph_t *graph)
+{
+   queue_t *queue              = init_queue();
+   graph->entrypoint->visited  = true;
+
+   queue->enqueue(queue, graph->entrypoint);
+
+   while(!queue->is_empty(queue))
+   {
+      node_t *current = queue->dequeue(queue);
+
+      if(current == graph->exit)
+         break;
+    
+      for(int i = 0; i < EDGES_COUNT; i++)
+      {
+         node_t * neighbor = current->edges[i];
+
+          if( neighbor != NULL && !neighbor->visited)
+          {
+             neighbor->visited = true;
+             neighbor->parent = current;
+             if(neighbor->type == EMPTY || neighbor->type == IO)
+                 queue->enqueue(queue, neighbor);
+          }
+      }
+   }
+
+   free(queue);
+}
+
+
+
 static void free_graph(graph_t *graph)
 {
    for(size_t i = 0; i < graph->len; ++i)
@@ -180,11 +230,18 @@ static void add_edges(graph_t *graph, int next, int prev, int under, int over)
 }
 
 
-static void add_node(graph_t *graph, int value)
+static void add_node(graph_t *graph, maze_t *maze)
 {
    node_t *node = (node_t*)malloc(sizeof(node_t));
-   node->value = value;
+   node->value = maze->input.data[maze->input.cursor];
    node->visited = false;
+
+   if(node->value == maze->full)
+      node->type = FULL;
+   else if(node->value == maze->empty)
+      node->type = EMPTY;
+   else
+      node->type = IO;
 
    graph->nodes[graph->index] = node;
    graph->index++;
