@@ -30,6 +30,7 @@ typedef struct maze
 
 } maze_t;
 
+typedef void (*fun_ptr)(maze_t*, char*);
 
 //map_t *load_map(char *str);
 
