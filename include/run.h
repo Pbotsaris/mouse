@@ -1,14 +1,14 @@
 /*
  * =====================================================================================
  *
- *       Filename:  main.c
+ *       Filename:  run.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  11/02/2021 09:21:57
+ *        Created:  11/13/21 10:48:19
  *       Revision:  none
- >?*       Compiler:  gcc
+ *       Compiler:  gcc
  *
  *         Author:  YOUR NAME (), 
  *   Organization:  
@@ -16,13 +16,12 @@
  * =====================================================================================
  */
 
-#include "../include/run.h"
+#ifndef RUN_H
+#define RUN_H
+#include "../include/graph.h"
+#include "../include/maze.h"
 
-int main(int argc, char *argv[])
-{
 
-  run(argc, argv);
+void run(int argc, char *argv[]);
 
-  return 0;
-}
-
+#endif

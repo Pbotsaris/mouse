@@ -23,7 +23,7 @@
 static void load_from_maze(graph_t *graph, maze_t *maze);
 static void load_edges(graph_t *graph, maze_t *maze);
 static void set_exit_entrypoint(graph_t *graph, maze_t *maze);
-static void write_path(graph_t *graph, maze_t *maze);
+static int write_path(graph_t *graph, maze_t *maze);
 static void print(graph_t *graph, maze_t *maze);
 static void free_graph(graph_t *graph);
 static void search_path(graph_t *graph);
@@ -33,7 +33,6 @@ static void add_edges(graph_t *graph, int next, int prev,  int under, int over);
 static void add_node(graph_t *graph, maze_t *maze);
 static void set_entrypoint(graph_t *graph, maze_t *maze);
 static void set_exit(graph_t *graph, maze_t *maze);
-
 
 /*  PUBLIC FUNCTIONS */
 graph_t *init_graph(size_t length)
@@ -54,10 +53,7 @@ graph_t *init_graph(size_t length)
    return graph;
 }
 
-
 /*  PUBLIC METHODS */
-
-
 
 static void load_from_maze(graph_t *graph, maze_t *maze)
 {
@@ -140,6 +136,7 @@ static void load_edges(graph_t *graph, maze_t *maze)
    }
 }
 
+
 static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
 {
    set_entrypoint(graph, maze);
@@ -148,14 +145,15 @@ static void set_exit_entrypoint(graph_t *graph, maze_t *maze)
 }
 
 
-static void write_path(graph_t *graph, maze_t *maze)
+static int write_path(graph_t *graph, maze_t *maze)
 {
    node_t *next = graph->exit->parent;
+   int count    = 0;
 
    if(next == NULL)
    {
       graph->valid = false;
-      return;
+      return 0;
    }
 
    while(next != graph->entrypoint)
@@ -163,20 +161,24 @@ static void write_path(graph_t *graph, maze_t *maze)
       if(next == NULL)
       {
          graph->valid = false;
-         break;
+         return 0;
       }
 
       next->value = maze->path;
       next = next->parent;
+      count++;
    }
+
+
+   return count;
 
 }
 
 static void print(graph_t *graph, maze_t *maze)
 {
-   int column         = 0;
+   int column = 0;
 
-   for(int i = 0; i < graph->len; i++)
+   for(size_t i = 0; i < graph->len; i++)
    { 
       printf("%c", graph->nodes[i]->value);
 
@@ -189,6 +191,7 @@ static void print(graph_t *graph, maze_t *maze)
       }
     }
 }
+
 
 static void search_path(graph_t *graph)
 {
@@ -220,7 +223,6 @@ static void search_path(graph_t *graph)
 
    free(queue);
 }
-
 
 
 static void free_graph(graph_t *graph)

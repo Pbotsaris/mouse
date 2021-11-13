@@ -44,7 +44,7 @@ typedef struct graph{
   void (*load_from_maze)       (struct graph*, struct maze*);
   void (*load_edges)           (struct graph*, struct maze*);
   void (*set_exit_entrypoint)  (struct graph*, struct maze*);
-  void (*write_path)           (struct graph*, struct maze*);
+  int (*write_path)           (struct graph*, struct maze*);
   void (*print)                (struct graph*, struct maze*);
   void (*search_path)          (struct graph*);
   void (*free)                 (struct graph*);
